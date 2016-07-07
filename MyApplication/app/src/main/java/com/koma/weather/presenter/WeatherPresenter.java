@@ -30,6 +30,7 @@ public class WeatherPresenter implements WeatherContract.MainPresenter {
 
     @Override
     public void subscribe() {
+        Logger.i(TAG, "subscribe");
         if (mCompositeSubscription == null) {
             mCompositeSubscription = new CompositeSubscription();
         }
@@ -37,7 +38,7 @@ public class WeatherPresenter implements WeatherContract.MainPresenter {
             mSubscriber = new Subscriber<Weather>() {
                 @Override
                 public void onCompleted() {
-
+                    showCompleted();
                 }
 
                 @Override
@@ -47,6 +48,7 @@ public class WeatherPresenter implements WeatherContract.MainPresenter {
 
                 @Override
                 public void onNext(Weather weather) {
+                    Logger.i(TAG, "subscribe  onNext");
                     mWeather.status = weather.status;
                     mWeather.aqi = weather.aqi;
                     mWeather.basic = weather.basic;
@@ -58,10 +60,12 @@ public class WeatherPresenter implements WeatherContract.MainPresenter {
                 }
             };
         }
+        loadWeather();
     }
 
     @Override
     public void unSubscribe() {
+        Logger.i(TAG, "unSubscribe");
         if (mCompositeSubscription != null) {
             mCompositeSubscription.unsubscribe();
         }
@@ -69,11 +73,12 @@ public class WeatherPresenter implements WeatherContract.MainPresenter {
 
     @Override
     public void loadWeather() {
+        Logger.i(TAG, "loadWeather");
         addSubscription(RetrofitSingleton.getInstance().fetchWeather("深圳").subscribe(mSubscriber));
-       // Logger.i(TAG,)
     }
 
     private void addSubscription(Subscription subscription) {
+        Logger.i(TAG, "addSubscription");
         if (mCompositeSubscription == null) {
             mCompositeSubscription = new CompositeSubscription();
         }
@@ -83,17 +88,19 @@ public class WeatherPresenter implements WeatherContract.MainPresenter {
 
     @Override
     public void notifyDataSetChanged(Weather weather) {
-        Logger.i(TAG,"notifyDataSetChanged");
+        Logger.i(TAG, "notifyDataSetChanged");
         mView.refreshWeather(weather);
     }
 
     @Override
     public void hanldeError() {
+        Logger.i(TAG, "handleError");
 
     }
 
     @Override
     public void showCompleted() {
-
+        Logger.i(TAG, "showCompleted");
+        mView.showCompleted();
     }
 }

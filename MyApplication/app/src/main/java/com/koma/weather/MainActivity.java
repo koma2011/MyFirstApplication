@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,7 +14,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.koma.weather.base.BaseActivity;
+import com.koma.weather.presenter.WeatherPresenter;
 import com.koma.weather.utils.log.Logger;
+import com.koma.weather.view.fragment.WeatherFragment;
 
 import butterknife.Bind;
 
@@ -21,6 +24,7 @@ public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = MainActivity.class.getName();
     private long exitTime = 0; ////记录第一次点击的时间
+    private WeatherPresenter mPresenter;
     @Bind(R.id.fab)
     FloatingActionButton fab;
     @Bind(R.id.toolbar)
@@ -47,6 +51,15 @@ public class MainActivity extends BaseActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+        WeatherFragment weatherFragment = (WeatherFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        if (weatherFragment == null) {
+            Logger.i(TAG, "weatherFragment is null");
+            weatherFragment = WeatherFragment.newInstance();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.contentFrame, weatherFragment);
+            fragmentTransaction.commit();
+        }
+        mPresenter = new WeatherPresenter(weatherFragment);
     }
 
     @Override
@@ -56,6 +69,7 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onBackPressed() {
+        Logger.i(TAG, "onBackPressed");
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);

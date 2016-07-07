@@ -10,6 +10,8 @@ import com.koma.weather.model.Weather;
 public interface WeatherContract {
     interface MainView extends BaseView<MainPresenter> {
         void refreshWeather(Weather weather);
+
+        void showCompleted();
     }
 
     interface MainPresenter extends BasePresenter {

@@ -31,6 +31,7 @@ public class RetrofitSingleton {
     private static final String TAG = "RetrofitSingleton";
 
     public static void init() {
+        Logger.i(TAG, "init");
         initOkHttp();
         initRetrofit();
         apiService = retrofit.create(ApiInterface.class);
@@ -75,6 +76,7 @@ public class RetrofitSingleton {
     }
 
     public Observable<Weather> fetchWeather(String city) {
+        Logger.i(TAG, "fetchWeather city : " + city);
         return apiService.mWeatherAPI(city, Constant.KEY)
                 .filter(new Func1<WeatherAPI, Boolean>() {
                     @Override
@@ -94,6 +96,7 @@ public class RetrofitSingleton {
                 ).map(new Func1<WeatherAPI, Weather>() {
                     @Override
                     public Weather call(WeatherAPI weatherAPI) {
+                        Logger.i(TAG, "-------map  call----");
                         return weatherAPI.mHeWeatherDataService30s.get(0);
                     }
                 }).subscribeOn(Schedulers.io())
